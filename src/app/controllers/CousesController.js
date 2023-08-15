@@ -9,6 +9,19 @@ class CousesController {
       })
       .catch(next);
   }
+
+  create(req, res) {
+    res.render("create");
+  }
+
+  store(req, res) {
+    // res.json(req.body);
+    const course = new Course(req.body);
+    course
+      .save()
+      .then(() => res.redirect("/"))
+      .catch((error) => {});
+  }
 }
 
 module.exports = new CousesController();
