@@ -10,6 +10,7 @@ const Course = new Schema(
     description: String,
     image: { type: String, default: '' },
     slug: { type: String, slug: "name" },
+    deletedAt: { type: Date, default: Date.now },
   },
   { timestamps: true }
 );

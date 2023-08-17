@@ -41,11 +41,19 @@ class CousesController {
   updateDone(req, res, next) {
     // res.json(req.body)
     Course.updateOne({ _id: req.params.id }, req.body)
-      .then((courses) => {
+      .then(() => {
         res.redirect("/courses/table")
       })
       .catch(next);
   }
 
+  delete(req, res, next) {
+
+    Course.deleteOne({ _id: req.params.id })
+      .then(() => {
+        res.redirect("back")
+      })
+      .catch(next);
+  }
 }
 module.exports = new CousesController();
