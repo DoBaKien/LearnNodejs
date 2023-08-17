@@ -8,8 +8,8 @@ const Course = new Schema(
   {
     name: { type: String },
     description: String,
-    image: String,
-    slug: { type: String, slug: "name", unique: true },
+    image: { type: String, default: '' },
+    slug: { type: String, slug: "name" },
   },
   { timestamps: true }
 );
