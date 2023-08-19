@@ -48,12 +48,37 @@ class CousesController {
   }
 
   delete(req, res, next) {
+    Course.delete({ _id: req.params.id })
+      .then(() => {
+        res.redirect("back")
+      })
+      .catch(next);
+  }
 
+  deleteforce(req, res, next) {
     Course.deleteOne({ _id: req.params.id })
       .then(() => {
         res.redirect("back")
       })
       .catch(next);
   }
+
+
+  deletedCourses(req, res, next) {
+    Course.findDeleted({ deleted: false })
+      .then((courses) => {
+        res.render("courses/trash", { courses: mutipleMongooseToObject(courses) });
+      })
+      .catch(next);
+  }
+
+  restore(req, res, next) {
+    Course.restore({ _id: req.params.id })
+      .then(() => {
+        res.redirect("back")
+      })
+      .catch(next);
+  }
+
 }
 module.exports = new CousesController();
