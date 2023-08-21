@@ -15,6 +15,6 @@ const Course = new Schema(
 );
 
 mongoose.plugin(slug);
-Course.plugin(mongoose_delete, { deletedAt: true, overrideMethods: 'all' });
+Course.plugin(mongoose_delete, { deletedAt: true, overrideMethods: ['countDocuments', 'restore', 'countDocumentsDeleted'] });
 
 module.exports = mongoose.model("Course", Course);

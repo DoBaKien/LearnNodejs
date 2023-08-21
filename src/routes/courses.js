@@ -5,6 +5,10 @@ const cousesController = require("../app/controllers/CousesController");
 router.get("/create", cousesController.create);
 router.post("/store", cousesController.store);
 router.get("/table", cousesController.table);
+router.post("/handle-form", cousesController.handleForm);
+
+router.post("/restore-form", cousesController.restoreForm);
+
 router.get("/:id/update", cousesController.update);
 router.get("/trash", cousesController.deletedCourses)
 router.patch("/:id/restore", cousesController.restore);

@@ -31,11 +31,23 @@ class CousesController {
   }
 
   table(req, res, next) {
-    Course.find({})
-      .then((courses) => {
-        res.render("courses/table", { courses: mutipleMongooseToObject(courses) });
-      })
-      .catch(next);
+
+    Promise.all([Course.find({ $or: [{ deleted: { $exists: false } }, { deleted: false }] }), Course.find({ deleted: true })])
+      .then(([courses, count]) => {
+        res.render("courses/table", { count: count.length, courses: mutipleMongooseToObject(courses) });
+      }).catch(next);
+
+    // Course.find({ deleted: true })
+    //   .then((count) => {
+    //     console.log(count.length);
+    //   })
+    //   .catch(next);
+
+    // Course.find({ $or: [{ deleted: { $exists: false } }, { deleted: false }] })
+    //   .then((courses) => {
+    //     res.render("courses/table", { courses: mutipleMongooseToObject(courses) });
+    //   })
+    //   .catch(next);
   }
 
   updateDone(req, res, next) {
@@ -65,7 +77,7 @@ class CousesController {
 
 
   deletedCourses(req, res, next) {
-    Course.findDeleted({ deleted: false })
+    Course.find({ deleted: true })
       .then((courses) => {
         res.render("courses/trash", { courses: mutipleMongooseToObject(courses) });
       })
@@ -79,6 +91,48 @@ class CousesController {
       })
       .catch(next);
   }
+
+  handleForm(req, res, next) {
+    switch (req.body.action) {
+      case 'asd':
+        res.redirect("back")
+        break
+      case 'delete':
+        Course.delete({ _id: { $in: req.body.coursesId } })
+          .then(() => {
+            res.redirect("back")
+          })
+          .catch(next);
+        break
+      default:
+        res.json({ message: "asd" })
+    }
+  }
+
+  restoreForm(req, res, next) {
+    switch (req.body.action) {
+      case 'asd':
+        res.redirect("back")
+        break
+      case 'restore':
+        Course.restore({ _id: { $in: req.body.coursesId } })
+          .then(() => {
+            res.redirect("back")
+          })
+          .catch(next);
+        break
+      case 'delete':
+        Course.deleteOne({ _id: { $in: req.body.coursesId } })
+          .then(() => {
+            res.redirect("back")
+          })
+          .catch(next);
+        break
+      default:
+        res.json({ message: "asd" })
+    }
+  }
+
 
 }
 module.exports = new CousesController();
