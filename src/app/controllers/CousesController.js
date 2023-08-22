@@ -31,8 +31,15 @@ class CousesController {
   }
 
   table(req, res, next) {
+    let courseQuery = Course.find({ $or: [{ deleted: { $exists: false } }, { deleted: false }] })
 
-    Promise.all([Course.find({ $or: [{ deleted: { $exists: false } }, { deleted: false }] }), Course.find({ deleted: true })])
+    if (req.query.hasOwnProperty('_sort')) {
+      courseQuery = courseQuery.sort({
+        [req.query.column]: req.query.type
+      })
+    }
+
+    Promise.all([courseQuery, Course.find({ deleted: true })])
       .then(([courses, count]) => {
         res.render("courses/table", { count: count.length, courses: mutipleMongooseToObject(courses) });
       }).catch(next);

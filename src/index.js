@@ -7,9 +7,12 @@ const port = 3000;
 const route = require("./routes");
 const db = require("./config/db");
 const methodOverride = require('method-override')
+const Sortmiddleware = require('./app/middleware/Sortmiddleware');
+const { type } = require("os");
 
 db.connect();
 app.use(methodOverride('_method'))
+app.use(Sortmiddleware)
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -20,7 +23,30 @@ app.use(express.json());
 //  Chrome/115.0.0.0 Safari/537.36"
 // Morgan cho thông tin ở trong console
 
-app.engine(".hbs", engine({ extname: ".hbs", helpers: { sum: (a, b) => a + b } }));
+app.engine(".hbs", engine({
+  extname: ".hbs", helpers: {
+    sum: (a, b) => a + b,
+    sortable: (field, sort) => {
+      const sortType = field === sort.column ? sort.type : 'default'
+
+      const icons = {
+        default: `<i class="fas fa-sort"></i>`,
+        asc: `<i class="fas fa-sort-amount-up"></i>`,
+        desc: `<i class="fas fa-sort-amount-down"></i>`
+
+      }
+      const types = {
+        default: 'desc',
+        asc: 'desc',
+        desc: 'asc'
+      }
+      const icon = icons[sort.type]
+      const type = types[sort.type]
+
+      return `<a href="?_sort&column=${field}&type=${type}">${icon}</a>`
+    }
+  }
+}));
 app.set("view engine", "hbs");
 
 app.set("views", __dirname + "/resources/views");
